@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 
 use App\Models\User;
 
+use Auth;
+
 class UsersController extends Controller
 {
     public function create()
@@ -26,7 +28,7 @@ class UsersController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|max:50',
-            'email' => 'required|emial|unique:users|max:255',
+            'email' => 'required|email|unique:users|max:255',
             'password' => 'required'
         ]);
 
@@ -36,6 +38,7 @@ class UsersController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
+        Auth::login($user);
         session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
         return redirect()->route('users.show', [$user]);
     }
