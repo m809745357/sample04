@@ -38,7 +38,10 @@ class UsersController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view('users.show', compact('user'));
+        $statuses = $user->statuses()
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(30);
+        return view('users.show', compact('user', 'statuses'));
     }
 
     public function store(Request $request)
@@ -112,7 +115,7 @@ class UsersController extends Controller
 
         Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
             $message->from($from, $name)->to($to)->subject($subject);
-        })
+        });
     }
 
     public function confirmEmail($token)
